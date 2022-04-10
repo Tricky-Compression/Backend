@@ -3,7 +3,7 @@ ENV APP_HOME=/app
 WORKDIR $APP_HOME
 RUN chown -R gradle:gradle $APP_HOME/
 COPY --chown=gradle:gradle build.gradle settings.gradle $APP_HOME/
-COPY --chown=gradle:gradle ./src/ $APP_HOME/src/
+COPY --chown=gradle:gradle src2/ $APP_HOME/src/
 RUN gradle --quiet assemble --no-build-cache --parallel
 
 FROM openjdk:17-alpine
