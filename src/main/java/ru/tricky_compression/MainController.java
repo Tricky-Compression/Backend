@@ -1,13 +1,13 @@
 package ru.tricky_compression;
 
-import java.util.concurrent.atomic.AtomicLong;
-
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.concurrent.atomic.AtomicLong;
+
 @RestController
-public class GreetingController {
+public class MainController {
 
 	private static final String template = "Hello, %s!";
 	private final AtomicLong counter = new AtomicLong();
@@ -15,5 +15,10 @@ public class GreetingController {
 	@GetMapping("/greeting")
 	public Greeting greeting(@RequestParam(value = "name", defaultValue = "World") String name) {
 		return new Greeting(counter.incrementAndGet(), String.format(template, name));
+	}
+
+	@GetMapping("api/upload")
+	public DataFrame upload(@RequestParam(value = "data") String data) {
+		return new DataFrame(data.chars());
 	}
 }
