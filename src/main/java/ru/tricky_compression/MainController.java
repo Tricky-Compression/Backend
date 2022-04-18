@@ -1,8 +1,8 @@
 package ru.tricky_compression;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -24,13 +24,14 @@ public class MainController {
 		return new Greeting(counter.incrementAndGet(), String.format(template, name));
 	}
 
-	@GetMapping("api/upload")
-	public DataFrame upload(@RequestParam(value = "data") String data) {
-		return new DataFrame(data);
+	@RequestMapping(value ="api/upload", method = RequestMethod.POST)
+	public ResponseEntity<String> upload(@RequestBody DataFrame data) {
+		dataBase.add(new Element(data.getDataFrame()));
+		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 
 	@GetMapping("api/download")
-	public Element download(@RequestParam(value = "id") Integer id) {
+	public Element download(@RequestParam(value = "id") int id) {
 		return dataBase.get(id);
 	}
 }
