@@ -8,6 +8,13 @@ import java.util.concurrent.atomic.AtomicLong;
 
 @RestController
 public class MainController {
+	DataBase dataBase = new DataBase();
+
+	public MainController() {
+		dataBase.add(new Element("first"));
+		dataBase.add(new Element("second"));
+		dataBase.add(new Element("third"));
+	}
 
 	private static final String template = "Hello, %s!";
 	private final AtomicLong counter = new AtomicLong();
@@ -19,6 +26,11 @@ public class MainController {
 
 	@GetMapping("api/upload")
 	public DataFrame upload(@RequestParam(value = "data") String data) {
-		return new DataFrame(data.chars());
+		return new DataFrame(data);
+	}
+
+	@GetMapping("api/download")
+	public Element download(@RequestParam(value = "id") Integer id) {
+		return dataBase.get(id);
 	}
 }

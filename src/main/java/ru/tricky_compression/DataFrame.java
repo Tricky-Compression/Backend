@@ -1,15 +1,13 @@
 package ru.tricky_compression;
 
-import java.util.stream.IntStream;
-
 public class DataFrame {
-    private final IntStream dataFrame;
+    private final String dataFrame;
 
-    public DataFrame(IntStream dataFrame) {
+    public DataFrame(String dataFrame) {
         this.dataFrame = dataFrame;
     }
 
-    public IntStream getDataFrame() {
+    public String getDataFrame() {
         return dataFrame;
     }
 }
