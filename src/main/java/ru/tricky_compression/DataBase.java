@@ -8,7 +8,6 @@ public class DataBase {
 
     public void add(Element element) {
         dataBase.add(element);
-        System.out.println("size = " + dataBase.size());
     }
 
     public Element get(int id) {

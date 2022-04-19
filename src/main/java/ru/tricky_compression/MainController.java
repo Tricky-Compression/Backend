@@ -4,6 +4,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.concurrent.atomic.AtomicLong;
 
 @RestController
@@ -27,6 +30,15 @@ public class MainController {
 	@PostMapping(value ="api/upload")
 	public ResponseEntity<String> upload(@RequestBody DataFrame data) {
 		dataBase.add(new Element(data.getContent()));
+		return ResponseEntity.status(HttpStatus.CREATED).build();
+	}
+
+	@PostMapping(value = "api/upload/single_file")
+	public ResponseEntity<String> uploadSingleFile(@RequestBody File file) throws IOException {
+		BufferedWriter writer = new BufferedWriter(new FileWriter(file.getFilename()));
+		writer.write(file.getData());
+
+		writer.close();
 		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 
