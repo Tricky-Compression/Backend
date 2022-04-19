@@ -4,15 +4,15 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.format.annotation.DateTimeFormat;
 
 public class DataFrame {
-    private String dataFrame;
+    private String content;
 
     public DataFrame(String dataFrame) {
-        this.dataFrame = dataFrame;
+        this.content = dataFrame;
     }
 
     public DataFrame() {}
 
-    public String getDataFrame() {
-        return dataFrame;
+    public String getContent() {
+        return content;
     }
 }

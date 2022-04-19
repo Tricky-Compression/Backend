@@ -24,9 +24,9 @@ public class MainController {
 		return new Greeting(counter.incrementAndGet(), String.format(template, name));
 	}
 
-	@RequestMapping(value ="api/upload", method = RequestMethod.POST)
+	@PostMapping(value ="api/upload")
 	public ResponseEntity<String> upload(@RequestBody DataFrame data) {
-		dataBase.add(new Element(data.getDataFrame()));
+		dataBase.add(new Element(data.getContent()));
 		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 
