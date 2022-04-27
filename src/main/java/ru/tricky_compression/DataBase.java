@@ -11,10 +11,10 @@ public class DataBase {
     }
 
     public Element get(int id) {
-        if (id < dataBase.size()) {
-            return dataBase.get(id);
-        } else {
-            return null;
-        }
+        return dataBase.get(id);
+    }
+
+    public int size() {
+        return dataBase.size();
     }
 }
