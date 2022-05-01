@@ -18,6 +18,7 @@ import java.net.URLConnection;
 @RestController
 @RequestMapping("/api")
 public class StreamingDataController {
+    @SuppressWarnings("unchecked")
     @GetMapping(value = "/data", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<StreamingResponseBody> data(final HttpServletResponse response) {
         response.setContentType("application/json");
@@ -36,6 +37,7 @@ public class StreamingDataController {
         return new ResponseEntity(stream, HttpStatus.OK);
     }
 
+    @SuppressWarnings("unchecked")
     @GetMapping(value = "/consume", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> consume() throws IOException {
         URL url = new URL("http://localhost:8080/api/data");

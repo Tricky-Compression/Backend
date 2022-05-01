@@ -6,7 +6,6 @@ plugins {
 
 group = 'ru.tricky_compression'
 version = '1.0-SNAPSHOT'
-sourceCompatibility = '17'
 
 repositories {
     mavenCentral()
@@ -21,4 +20,10 @@ dependencies {
 
 test {
     useJUnitPlatform()
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'ru.tricky_compression.Main'
+    }
 }

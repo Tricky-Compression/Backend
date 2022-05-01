@@ -1,0 +1,8 @@
+version: "3"
+
+services:
+  server:
+    image: apozdniakov/tricky-compression:1.0.0
+    restart: always
+    ports:
+      - "1337:8080"
