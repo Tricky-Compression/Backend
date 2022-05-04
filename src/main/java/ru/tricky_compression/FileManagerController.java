@@ -4,7 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.*;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -13,7 +13,7 @@ import java.nio.file.StandardOpenOption;
 @RestController
 @RequestMapping("/api")
 public class FileManagerController {
-    private static final String prefix = "/app";
+    private static final String prefix = "/home/tricky-login/storage/";
 
     private Path getPath(File file) {
         return Path.of(prefix, file.getFilename());
@@ -22,6 +22,7 @@ public class FileManagerController {
     @PostMapping("/upload/single_file")
     public ResponseEntity<String> uploadSingleFile(@RequestBody File file) {
         try {
+            Files.createDirectories(getPath(file).getParent());
             Files.write(
                     getPath(file),
                     file.getData(),
@@ -30,7 +31,6 @@ public class FileManagerController {
             );
             return ResponseEntity.status(HttpStatus.CREATED).build();
         } catch (IOException e) {
-            System.out.println(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
     }
