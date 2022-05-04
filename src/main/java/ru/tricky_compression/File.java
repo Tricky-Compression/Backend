@@ -3,7 +3,7 @@ package ru.tricky_compression;
 public class File {
     private String filename;
 
-    private char[] data;
+    private byte[] data;
 
     File() {}
 
@@ -15,7 +15,7 @@ public class File {
         return filename;
     }
 
-    public char[] getData() {
+    public byte[] getData() {
         return data;
     }
 }
