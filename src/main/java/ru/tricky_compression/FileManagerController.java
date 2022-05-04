@@ -13,18 +13,15 @@ import java.nio.file.StandardOpenOption;
 @RestController
 @RequestMapping("/api")
 public class FileManagerController {
-    private static final String prefix = "/home/tricky-login/storage/";
-
-    private Path getPath(File file) {
-        return Path.of(prefix, file.getFilename());
-    }
+    private static final String prefix = "/file_storage/";
 
     @PostMapping("/upload/single_file")
     public ResponseEntity<String> uploadSingleFile(@RequestBody File file) {
         try {
-            Files.createDirectories(getPath(file).getParent());
+            Path path = Path.of(prefix, file.getFilename());
+            Files.createDirectories(path.getParent());
             Files.write(
-                    getPath(file),
+                    path,
                     file.getData(),
                     StandardOpenOption.CREATE,
                     StandardOpenOption.TRUNCATE_EXISTING

@@ -6,3 +6,8 @@ services:
     restart: always
     ports:
       - "1337:8080"
+    volumes:
+      - file_storage:/file_storage/
+
+volumes:
+  file_storage:
