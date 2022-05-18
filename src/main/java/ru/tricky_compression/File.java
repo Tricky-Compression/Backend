@@ -6,9 +6,12 @@ public class File {
     long serverStart;
     long serverEnd;
 
-    private final String filename;
+    private String filename;
 
     private byte[] data;
+
+    File() {
+    }
 
     File(String filename) {
         this.filename = filename;
