@@ -24,7 +24,7 @@ public class FileManagerController {
         return Path.of(prefix, filename);
     }
 
-    @PostMapping("/get_list_files")
+    @GetMapping("/get_list_files")
     public ResponseEntity<String> getListFiles() {
         Set<String> files = Stream.of(Objects.requireNonNull(new java.io.File(prefix).listFiles()))
                 .filter(file -> !file.isDirectory())
@@ -85,7 +85,7 @@ public class FileManagerController {
                 "\"clientEnd\"=%d, " +
                 "\"serverStart\"=%d, " +
                 "\"serverEnd\"=%d," +
-                "\"filename\"=%s," +
+                "\"filename\"=\"%s\"," +
                 "\"data\"=%s" +
                 "}",
                 file.getClientStart(),
