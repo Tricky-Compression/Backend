@@ -10,6 +10,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @RestController
 @RequestMapping("/api")
@@ -18,6 +22,21 @@ public class FileManagerController {
 
     private Path getPath(String filename) {
         return Path.of(prefix, filename);
+    }
+
+    @PostMapping("/get_list_files")
+    public ResponseEntity<String> getListFiles() {
+        Set<String> files = Stream.of(Objects.requireNonNull(new java.io.File(prefix).listFiles()))
+                .filter(file -> !file.isDirectory())
+                .map(java.io.File::getName)
+                .collect(Collectors.toSet());
+        StringBuilder json = new StringBuilder("{" +
+                "\"files = [\"");
+        for (String filename : files) {
+            json.append(filename).append(",");
+        }
+        json.append("]}");
+        return ResponseEntity.status(HttpStatus.OK).body(json.toString());
     }
 
     @PostMapping("/upload/single_file")
