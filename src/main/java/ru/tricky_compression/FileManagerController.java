@@ -53,17 +53,28 @@ public class FileManagerController {
     public ResponseEntity<String> downloadSingleFile(@RequestParam(value = "filename") String filename) {
         File file = new File();
         file.setServerStart();
-        ResponseEntity<String> responseEntity;
         try {
             Path path = getPath(filename);
-            byte[] data = Files.readAllBytes(Paths.get(path.toString()));
-            String json = String.format("{\"data\"=%s}", Arrays.toString(data));
-            responseEntity = ResponseEntity.status(HttpStatus.ACCEPTED).body(json);
+            file.setData(Files.readAllBytes(Paths.get(path.toString())));
         } catch (IOException e) {
-            responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
         file.setServerEnd();
-        return responseEntity;
+        String json = String.format("{" +
+                "\"clientStart\"=%d, " +
+                "\"clientEnd\"=%d, " +
+                "\"serverStart\"=%d, " +
+                "\"serverEnd\"=%d" +
+                "\"filename\"=%s" +
+                "\"data\"=%s" +
+                "}",
+                file.getClientStart(),
+                file.getClientEnd(),
+                file.getServerStart(),
+                file.getServerEnd(),
+                file.getFilename(),
+                Arrays.toString(file.getData()));
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(json);
     }
 
 }

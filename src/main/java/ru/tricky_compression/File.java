@@ -49,4 +49,7 @@ public class File {
         return serverEnd;
     }
 
+    public void setData(byte[] data) {
+        this.data = data;
+    }
 }
