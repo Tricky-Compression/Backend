@@ -33,4 +33,20 @@ public class File {
         serverEnd = System.nanoTime();
     }
 
+    public long getClientStart() {
+        return clientStart;
+    }
+
+    public long getClientEnd() {
+        return clientEnd;
+    }
+
+    public long getServerStart() {
+        return serverStart;
+    }
+
+    public long getServerEnd() {
+        return serverEnd;
+    }
+
 }

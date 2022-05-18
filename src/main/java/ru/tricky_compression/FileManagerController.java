@@ -23,7 +23,6 @@ public class FileManagerController {
     @PostMapping("/upload/single_file")
     public ResponseEntity<String> uploadSingleFile(@RequestBody File file) {
         file.setServerStart();
-        ResponseEntity<String> responseEntity;
         try {
             Path path = getPath(file.getFilename());
             Files.createDirectories(path.getParent());
@@ -33,24 +32,38 @@ public class FileManagerController {
                     StandardOpenOption.CREATE,
                     StandardOpenOption.TRUNCATE_EXISTING
             );
-            responseEntity = ResponseEntity.status(HttpStatus.CREATED).build();
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+        file.setServerEnd();
+        String json = String.format("{" +
+                "\"clientStart\"=%d, " +
+                "\"clientEnd\"=%d, " +
+                "\"serverStart\"=%d, " +
+                "\"serverEnd\"=%d" +
+                "}",
+                file.getClientStart(),
+                file.getClientEnd(),
+                file.getServerStart(),
+                file.getServerEnd());
+        return ResponseEntity.status(HttpStatus.CREATED).body(json);
+    }
+
+    @GetMapping("/download/single_file")
+    public ResponseEntity<String> downloadSingleFile(@RequestParam(value = "filename") String filename) {
+        File file = new File();
+        file.setServerStart();
+        ResponseEntity<String> responseEntity;
+        try {
+            Path path = getPath(filename);
+            byte[] data = Files.readAllBytes(Paths.get(path.toString()));
+            String json = String.format("{\"data\"=%s}", Arrays.toString(data));
+            responseEntity = ResponseEntity.status(HttpStatus.ACCEPTED).body(json);
         } catch (IOException e) {
             responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
         file.setServerEnd();
         return responseEntity;
-    }
-
-    @GetMapping("/download/single_file")
-    public ResponseEntity<String> downloadSingleFile(@RequestParam(value = "filename") String filename) {
-        try {
-            Path path = getPath(filename);
-            byte[] data = Files.readAllBytes(Paths.get(path.toString()));
-            String json = String.format("{\"data\"=%s}", Arrays.toString(data));
-            return ResponseEntity.status(HttpStatus.ACCEPTED).body(json);
-        } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
     }
 
 }
