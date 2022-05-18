@@ -42,7 +42,8 @@ public class FileManagerController {
         try {
             Path path = getPath(filename);
             byte[] data = Files.readAllBytes(Paths.get(path.toString()));
-            return ResponseEntity.status(HttpStatus.ACCEPTED).body(Arrays.toString(data));
+            String json = String.format("{\"data\"=%s}", Arrays.toString(data));
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(json);
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
