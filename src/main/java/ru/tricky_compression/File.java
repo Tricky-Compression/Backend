@@ -52,4 +52,8 @@ public class File {
     public void setData(byte[] data) {
         this.data = data;
     }
+
+    public void setFilename(String filename) {
+        this.filename = filename;
+    }
 }

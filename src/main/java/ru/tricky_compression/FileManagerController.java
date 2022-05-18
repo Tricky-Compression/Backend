@@ -52,6 +52,7 @@ public class FileManagerController {
     @GetMapping("/download/single_file")
     public ResponseEntity<String> downloadSingleFile(@RequestParam(value = "filename") String filename) {
         File file = new File();
+        file.setFilename(filename);
         file.setServerStart();
         try {
             Path path = getPath(filename);
