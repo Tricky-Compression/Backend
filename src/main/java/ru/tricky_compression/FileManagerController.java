@@ -64,8 +64,8 @@ public class FileManagerController {
                 "\"clientStart\"=%d, " +
                 "\"clientEnd\"=%d, " +
                 "\"serverStart\"=%d, " +
-                "\"serverEnd\"=%d" +
-                "\"filename\"=%s" +
+                "\"serverEnd\"=%d," +
+                "\"filename\"=%s," +
                 "\"data\"=%s" +
                 "}",
                 file.getClientStart(),
