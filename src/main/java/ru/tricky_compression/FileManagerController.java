@@ -22,6 +22,8 @@ public class FileManagerController {
 
     @PostMapping("/upload/single_file")
     public ResponseEntity<String> uploadSingleFile(@RequestBody File file) {
+        file.setServerStart();
+        ResponseEntity<String> responseEntity;
         try {
             Path path = getPath(file.getFilename());
             Files.createDirectories(path.getParent());
@@ -31,10 +33,12 @@ public class FileManagerController {
                     StandardOpenOption.CREATE,
                     StandardOpenOption.TRUNCATE_EXISTING
             );
-            return ResponseEntity.status(HttpStatus.CREATED).build();
+            responseEntity = ResponseEntity.status(HttpStatus.CREATED).build();
         } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
+        file.setServerEnd();
+        return responseEntity;
     }
 
     @GetMapping("/download/single_file")

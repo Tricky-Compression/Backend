@@ -1,11 +1,14 @@
 package ru.tricky_compression;
 
 public class File {
-    private String filename;
+    long clientStart;
+    long clientEnd;
+    long serverStart;
+    long serverEnd;
+
+    private final String filename;
 
     private byte[] data;
-
-    File() {}
 
     File(String filename) {
         this.filename = filename;
@@ -18,4 +21,13 @@ public class File {
     public byte[] getData() {
         return data;
     }
+
+    public void setServerStart() {
+        serverStart = System.nanoTime();
+    }
+
+    public void setServerEnd() {
+        serverEnd = System.nanoTime();
+    }
+
 }
