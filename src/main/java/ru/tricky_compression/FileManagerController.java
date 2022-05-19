@@ -1,24 +1,26 @@
 package ru.tricky_compression;
 
+import com.google.gson.Gson;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.tricky_compression.entity.FileData;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 import java.util.Objects;
-import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @RestController
 @RequestMapping("/api")
 public class FileManagerController {
+    private static final Gson gson = new Gson();
     private static final String prefix = "/file_storage/";
+    private static final File prefixFile = new File(prefix);
 
     private Path getPath(String filename) {
         return Path.of(prefix, filename);
@@ -26,23 +28,17 @@ public class FileManagerController {
 
     @GetMapping("/get_list_files")
     public ResponseEntity<String> getListFiles() {
-        Set<String> files = Stream.of(Objects.requireNonNull(new java.io.File(prefix).listFiles()))
+        String files = Arrays.stream(Objects.requireNonNull(prefixFile.listFiles()))
                 .filter(file -> !file.isDirectory())
                 .map(java.io.File::getName)
-                .collect(Collectors.toSet());
-        StringBuilder json = new StringBuilder("{" +
-                "\"files = [\"");
-        for (String filename : files) {
-            json.append(filename).append(",");
-        }
-        json.append("]}");
-        return ResponseEntity.status(HttpStatus.OK).body(json.toString());
+                .collect(Collectors.joining(",", "[", "]"));
+        return ResponseEntity.status(HttpStatus.OK).body(gson.toJson(files));
     }
 
     @PostMapping("/upload/single_file")
-    public ResponseEntity<String> uploadSingleFile(@RequestBody File file) {
-        file.setServerStart();
+    public ResponseEntity<String> uploadSingleFile(@RequestBody FileData file) {
         try {
+            file.getTimestamps().setServerStart();
             Path path = getPath(file.getFilename());
             Files.createDirectories(path.getParent());
             Files.write(
@@ -51,50 +47,24 @@ public class FileManagerController {
                     StandardOpenOption.CREATE,
                     StandardOpenOption.TRUNCATE_EXISTING
             );
+            file.getTimestamps().setServerEnd();
+            return ResponseEntity.status(HttpStatus.CREATED).body(gson.toJson(file.getTimestamps()));
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
-        file.setServerEnd();
-        String json = String.format("{" +
-                "\"clientStart\"=%d, " +
-                "\"clientEnd\"=%d, " +
-                "\"serverStart\"=%d, " +
-                "\"serverEnd\"=%d" +
-                "}",
-                file.getClientStart(),
-                file.getClientEnd(),
-                file.getServerStart(),
-                file.getServerEnd());
-        return ResponseEntity.status(HttpStatus.CREATED).body(json);
     }
 
     @GetMapping("/download/single_file")
     public ResponseEntity<String> downloadSingleFile(@RequestParam(value = "filename") String filename) {
-        File file = new File();
-        file.setFilename(filename);
-        file.setServerStart();
         try {
-            Path path = getPath(filename);
-            file.setData(Files.readAllBytes(Paths.get(path.toString())));
+            FileData file = new FileData(filename);
+            file.getTimestamps().setServerStart();
+            file.setData(Files.readAllBytes(getPath(filename)));
+            file.getTimestamps().setServerEnd();
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(gson.toJson(file));
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
-        file.setServerEnd();
-        String json = String.format("{" +
-                "\"clientStart\"=%d, " +
-                "\"clientEnd\"=%d, " +
-                "\"serverStart\"=%d, " +
-                "\"serverEnd\"=%d," +
-                "\"filename\"=\"%s\"," +
-                "\"data\"=%s" +
-                "}",
-                file.getClientStart(),
-                file.getClientEnd(),
-                file.getServerStart(),
-                file.getServerEnd(),
-                file.getFilename(),
-                Arrays.toString(file.getData()));
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body(json);
     }
 
 }
