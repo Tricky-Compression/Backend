@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/api")
 public class FileManagerController {
     private static final Gson gson = new Gson();
-    private static final String prefix = "/file_storage/";
+    private static final String prefix = "file_storage/";
     private static final File prefixFile = new File(prefix);
 
     private Path getPath(String filename) {

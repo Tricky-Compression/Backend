@@ -1,11 +1,8 @@
 package ru.tricky_compression.entity;
 
 public class FileData {
-
-    Timestamps timestamps = new Timestamps();
-
+    private final Timestamps timestamps = new Timestamps();
     private String filename;
-
     private byte[] data;
 
     public FileData() {
@@ -27,11 +24,11 @@ public class FileData {
         return data;
     }
 
-    public void setData(byte[] data) {
-        this.data = data;
-    }
-
     public void setFilename(String filename) {
         this.filename = filename;
+    }
+
+    public void setData(byte[] data) {
+        this.data = data;
     }
 }
