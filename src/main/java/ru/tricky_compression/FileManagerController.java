@@ -5,6 +5,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.tricky_compression.entity.FileData;
+import ru.tricky_compression.entity.FileTimestamps;
+import ru.tricky_compression.entity.Timestamps;
 
 import java.io.File;
 import java.io.IOException;
@@ -55,8 +57,9 @@ public class FileManagerController {
     }
 
     @GetMapping("/download/single_file")
-    public ResponseEntity<String> downloadSingleFile(@RequestParam(value = "filename") String filename) {
+    public ResponseEntity<String> downloadSingleFile(@RequestBody FileTimestamps fileTimestamps) {
         try {
+            String filename = fileTimestamps.getFilename();
             FileData file = new FileData(filename);
             file.getTimestamps().setServerStart();
             file.setData(Files.readAllBytes(getPath(filename)));

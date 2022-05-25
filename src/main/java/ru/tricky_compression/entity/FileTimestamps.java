@@ -1,15 +1,14 @@
 package ru.tricky_compression.entity;
 
 @SuppressWarnings("unused")
-public class FileData {
+public class FileTimestamps {
     private final Timestamps timestamps = new Timestamps();
     private String filename;
-    private byte[] data;
 
-    public FileData() {
+    public FileTimestamps() {
     }
 
-    public FileData(String filename) {
+    public FileTimestamps(String filename) {
         this.filename = filename;
     }
 
@@ -21,15 +20,7 @@ public class FileData {
         return filename;
     }
 
-    public byte[] getData() {
-        return data;
-    }
-
     public void setFilename(String filename) {
         this.filename = filename;
-    }
-
-    public void setData(byte[] data) {
-        this.data = data;
     }
 }
