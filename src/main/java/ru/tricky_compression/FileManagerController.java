@@ -59,10 +59,9 @@ public class FileManagerController {
     @GetMapping("/download/single_file")
     public ResponseEntity<String> downloadSingleFile(@RequestBody FileTimestamps fileTimestamps) {
         try {
-            String filename = fileTimestamps.getFilename();
-            FileData file = new FileData(filename);
+            FileData file = new FileData(fileTimestamps);
             file.getTimestamps().setServerStart();
-            file.setData(Files.readAllBytes(getPath(filename)));
+            file.setData(Files.readAllBytes(getPath(fileTimestamps.getFilename())));
             file.getTimestamps().setServerEnd();
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(gson.toJson(file));
         } catch (IOException e) {
