@@ -6,7 +6,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.tricky_compression.entity.FileData;
 import ru.tricky_compression.entity.FileTimestamps;
-import ru.tricky_compression.entity.Timestamps;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,7 +20,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/api")
 public class FileManagerController {
     private static final Gson gson = new Gson();
-    private static final String prefix = "file_storage/";
+    private static final String prefix = "/file_storage/";
     private static final File prefixFile = new File(prefix);
 
     private Path getPath(String filename) {
@@ -61,7 +60,8 @@ public class FileManagerController {
         try {
             FileData file = new FileData(fileTimestamps);
             file.getTimestamps().setServerStart();
-            file.setData(Files.readAllBytes(getPath(fileTimestamps.getFilename())));
+            Path path = getPath(fileTimestamps.getFilename());
+            file.setData(Files.readAllBytes(path));
             file.getTimestamps().setServerEnd();
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(gson.toJson(file));
         } catch (IOException e) {
