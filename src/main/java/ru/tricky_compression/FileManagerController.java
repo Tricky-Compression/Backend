@@ -5,7 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.tricky_compression.entity.FileData;
-import ru.tricky_compression.entity.FileTimestamps;
+import ru.tricky_compression.entity.Timestamps;
 
 import java.io.File;
 import java.io.IOException;
@@ -37,33 +37,39 @@ public class FileManagerController {
     }
 
     @PostMapping("/upload/single_file")
-    public ResponseEntity<String> uploadSingleFile(@RequestBody FileData file) {
+    public ResponseEntity<String> uploadSingleFile(@RequestBody FileData fileData) {
         try {
-            file.getTimestamps().setServerStart();
-            Path path = getPath(file.getFilename());
+            fileData.getTimestamps().setServerStart();
+            Path path = getPath(fileData.getFilename());
             Files.createDirectories(path.getParent());
             Files.write(
                     path,
-                    file.getData(),
+                    fileData.getData(),
                     StandardOpenOption.CREATE,
                     StandardOpenOption.TRUNCATE_EXISTING
             );
-            file.getTimestamps().setServerEnd();
-            return ResponseEntity.status(HttpStatus.CREATED).body(gson.toJson(file.getTimestamps()));
+            fileData.getTimestamps().setServerEnd();
+            return ResponseEntity.status(HttpStatus.CREATED).body(gson.toJson(fileData.getTimestamps()));
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
     @GetMapping("/download/single_file")
-    public ResponseEntity<String> downloadSingleFile(@RequestBody FileTimestamps fileTimestamps) {
+    public ResponseEntity<String> downloadSingleFile(@RequestParam String filename, @RequestParam long clientStart) {
         try {
-            FileData file = new FileData(fileTimestamps);
-            file.getTimestamps().setServerStart();
-            Path path = getPath(fileTimestamps.getFilename());
-            file.setData(Files.readAllBytes(path));
-            file.getTimestamps().setServerEnd();
-            return ResponseEntity.status(HttpStatus.ACCEPTED).body(gson.toJson(file));
+            FileData fileData = new FileData(filename);
+            try {
+                var field = Timestamps.class.getDeclaredField("clientStart");
+                field.setAccessible(true);
+                field.setLong(fileData, clientStart);
+            } catch (NoSuchFieldException | IllegalAccessException ignored) {
+            }
+            fileData.getTimestamps().setServerStart();
+            Path path = getPath(fileData.getFilename());
+            fileData.setData(Files.readAllBytes(path));
+            fileData.getTimestamps().setServerEnd();
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(gson.toJson(fileData));
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
