@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.tricky_compression.entity.ChunkData;
 import ru.tricky_compression.entity.FileData;
 import ru.tricky_compression.entity.Timestamps;
 
@@ -12,6 +13,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.stream.Collectors;
+
+import static java.lang.String.valueOf;
 
 @RestController
 @RequestMapping("/api")
@@ -22,6 +25,10 @@ public class FileManagerController {
 
     private Path getPath(String filename) {
         return Path.of(prefix, filename);
+    }
+
+    private Path getPathWithNumber(String filename, int number) {
+        return Path.of(getPath(filename).toString(), valueOf(number));
     }
 
     @GetMapping("/get_list_files")
@@ -71,6 +78,45 @@ public class FileManagerController {
             fileData.setData(Files.readAllBytes(path));
             fileData.getTimestamps().setServerEnd();
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(gson.toJson(fileData));
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/upload/chunk")
+    public ResponseEntity<String> uploadChunk(@RequestBody ChunkData chunk) {
+        try {
+            chunk.getTimestamps().setServerStart();
+            Path path = getPathWithNumber(chunk.getFilename(), chunk.getChunkNumber());
+            Files.createDirectories(path.getParent());
+            Files.write(
+                    path,
+                    chunk.getData(),
+                    StandardOpenOption.CREATE,
+                    StandardOpenOption.TRUNCATE_EXISTING
+            );
+            chunk.getTimestamps().setServerEnd();
+            return ResponseEntity.status(HttpStatus.CREATED).body(gson.toJson(chunk.getTimestamps()));
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/download/chunk")
+    public ResponseEntity<String> downloadChunk(@RequestBody int number, @RequestParam String filename, @RequestParam long clientStart) {
+        try {
+            ChunkData chunk = new ChunkData(number, filename);
+            try {
+                var field = Timestamps.class.getDeclaredField("clientStart");
+                field.setAccessible(true);
+                field.setLong(chunk.getTimestamps(), clientStart);
+            } catch (NoSuchFieldException | IllegalAccessException ignored) {
+            }
+            chunk.getTimestamps().setServerStart();
+            Path path = getPathWithNumber(chunk.getFilename(), chunk.getChunkNumber());
+            chunk.setData(Files.readAllBytes(path));
+            chunk.getTimestamps().setServerEnd();
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(gson.toJson(chunk));
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
