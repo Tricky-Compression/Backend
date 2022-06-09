@@ -1,4 +1,4 @@
-package ru.tricky_compression;
+package ru.tricky_compression.database;
 
 import java.util.ArrayList;
 import java.util.List;

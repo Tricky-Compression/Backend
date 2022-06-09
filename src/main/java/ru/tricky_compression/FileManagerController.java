@@ -12,7 +12,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import java.util.stream.Collectors;
 
 import static java.lang.String.valueOf;
 
@@ -34,10 +33,10 @@ public class FileManagerController {
     @GetMapping("/get_list_files")
     public ResponseEntity<String> getListFiles() {
         try (var stream = Files.walk(prefixPath)) {
-            String files = stream
+            String[] files = stream
                     .filter(Files::isRegularFile)
                     .map(path -> path.toFile().getName())
-                    .collect(Collectors.joining(",", "[", "]"));
+                    .toArray(String[]::new);
             return ResponseEntity.status(HttpStatus.OK).body(gson.toJson(files));
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());

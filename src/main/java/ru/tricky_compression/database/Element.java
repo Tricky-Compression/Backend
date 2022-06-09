@@ -1,4 +1,4 @@
-package ru.tricky_compression;
+package ru.tricky_compression.database;
 
 public class Element {
     public final String element;

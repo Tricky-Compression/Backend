@@ -1,4 +1,4 @@
-package ru.tricky_compression;
+package ru.tricky_compression.experimental;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;

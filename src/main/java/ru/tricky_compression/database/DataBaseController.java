@@ -1,8 +1,9 @@
-package ru.tricky_compression;
+package ru.tricky_compression.database;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.tricky_compression.entity.DataFrame;
 
 @RestController
 @RequestMapping("/api/database")

@@ -1,4 +1,4 @@
-package ru.tricky_compression;
+package ru.tricky_compression.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.format.annotation.DateTimeFormat;

@@ -1,4 +1,4 @@
-package ru.tricky_compression;
+package ru.tricky_compression.experimental;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
