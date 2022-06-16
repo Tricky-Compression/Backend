@@ -15,14 +15,11 @@ public class ConnectToPostgres {
                 Connection connection = DriverManager.getConnection(url, user, password);
                 Statement selectStatement = connection.createStatement();
         ) {
-            System.out.println("OK");
             ResultSet results = selectStatement.executeQuery(
-                    "SELECT COUNT(1) FROM " + tableName + " WHERE hash = " + hash + ";"
+                    "SELECT 1 FROM " + tableName + " WHERE hash = '" + hash + "';"
             );
-            System.out.println("WTF");
             result = results.next();
         } catch (SQLException ignored) {
-            System.out.println("exception!");
             result = false;
         }
         System.out.println(result);

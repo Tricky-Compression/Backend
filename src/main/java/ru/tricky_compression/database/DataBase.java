@@ -38,7 +38,7 @@ public class DataBase {
                 Statement selectStatement = connection.createStatement();
         ) {
             ResultSet results = selectStatement.executeQuery(
-                    "SELECT COUNT(1) FROM " + tableName + " WHERE hash = " + hash + ";"
+                    "SELECT 1 FROM " + tableName + " WHERE hash = '" + hash + "';"
             );
             return results.next();
         } catch (SQLException ignored) {
