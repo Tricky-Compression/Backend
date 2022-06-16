@@ -1,20 +1,46 @@
 package ru.tricky_compression.database;
 
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class DataBase {
-    private final List<Element> dataBase = new ArrayList<>();
+    private static final String url = "jdbc:postgresql://51.250.23.237:5432/";
+    private static final String tableName = "chunks";
 
-    public void add(Element element) {
-        dataBase.add(element);
+    public DataBase() {
+        // DEBUG BEGIN
+        try (
+                Connection connection = DriverManager.getConnection(url, "admin", "admin");
+                Statement selectStatement = connection.createStatement();
+        ) {
+            ResultSet results = selectStatement.executeQuery(
+                    "SELECT * FROM " + tableName + ";"
+            );
+            while (results.next()) {
+                System.out.printf("%d. %s \t %s\n",
+                        results.getRow(),
+                        results.getString("hash"),
+                        results.getString("path"));
+            }
+        } catch (SQLException exception) {
+            exception.printStackTrace();
+            System.exit(-1);
+        }
+        // DEBUG END
     }
 
-    public Element get(int id) {
-        return dataBase.get(id);
-    }
-
-    public int size() {
-        return dataBase.size();
+    public boolean contains(String hash) {
+        try (
+                Connection connection = DriverManager.getConnection(url, "admin", "admin");
+                Statement selectStatement = connection.createStatement();
+        ) {
+            ResultSet results = selectStatement.executeQuery(
+                    "SELECT COUNT(1) FROM " + tableName + " WHERE hash = " + hash + ";"
+            );
+            return results.next();
+        } catch (SQLException ignored) {
+            return false;
+        }
     }
 }
