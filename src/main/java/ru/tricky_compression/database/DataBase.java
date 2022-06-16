@@ -6,12 +6,14 @@ import java.util.List;
 
 public class DataBase {
     private static final String url = "jdbc:postgresql://51.250.23.237:5432/";
+    private static final String user = "admin";
+    private static final String password = "admin";
     private static final String tableName = "chunks";
 
     public DataBase() {
         // DEBUG BEGIN
         try (
-                Connection connection = DriverManager.getConnection(url, "admin", "admin");
+                Connection connection = DriverManager.getConnection(url, user, password);
                 Statement selectStatement = connection.createStatement();
         ) {
             ResultSet results = selectStatement.executeQuery(
@@ -32,7 +34,7 @@ public class DataBase {
 
     public boolean contains(String hash) {
         try (
-                Connection connection = DriverManager.getConnection(url, "admin", "admin");
+                Connection connection = DriverManager.getConnection(url, user, password);
                 Statement selectStatement = connection.createStatement();
         ) {
             ResultSet results = selectStatement.executeQuery(
