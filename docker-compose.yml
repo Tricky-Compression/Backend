@@ -8,6 +8,18 @@ services:
       - "1337:8080"
     volumes:
       - file_storage:/file_storage/
+  postgres:
+    image: postgres:10-alpine
+    restart: always
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres:/postgres/
+    environment:
+      - POSTGRES_DB=tricky_data
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin
 
 volumes:
   file_storage:
+  postgres:
