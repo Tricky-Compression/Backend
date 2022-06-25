@@ -1,8 +1,11 @@
 package ru.tricky_compression.database;
 
-import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 public class DataBase {
     private static final String url = "jdbc:postgresql://51.250.23.237:5432/";
@@ -14,12 +17,10 @@ public class DataBase {
 
     public DataBase() {
         // DEBUG BEGIN
-        try (
-                Connection connection = DriverManager.getConnection(url, user, password);
-                Statement selectStatement = connection.createStatement();
-        ) {
+        try (Connection connection = DriverManager.getConnection(url, user, password);
+             Statement selectStatement = connection.createStatement()) {
             ResultSet results = selectStatement.executeQuery(
-                    "SELECT * FROM " + chunksTable + ";"
+                    String.format("SELECT * FROM %s;", chunksTable)
             );
             while (results.next()) {
                 System.out.printf("%d. %s \t %s\n",
@@ -35,12 +36,10 @@ public class DataBase {
     }
 
     public static boolean contains(String hash) {
-        try (
-                Connection connection = DriverManager.getConnection(url, user, password);
-                Statement selectStatement = connection.createStatement();
-        ) {
+        try (Connection connection = DriverManager.getConnection(url, user, password);
+             Statement selectStatement = connection.createStatement()) {
             ResultSet results = selectStatement.executeQuery(
-                    "SELECT 1 FROM " + chunksTable + " WHERE hash = '" + hash + "';"
+                    String.format("SELECT 1 FROM %s WHERE hash = '%s';", chunksTable, hash)
             );
             return results.next();
         } catch (SQLException ignored) {
@@ -52,7 +51,7 @@ public class DataBase {
         try (
                 Connection connection = DriverManager.getConnection(url, user, password);
                 PreparedStatement insertStatement = connection.prepareStatement(
-                "INSERT INTO " + filesTable + "(" + filesTableColumn + ") VALUES ('" + filename + "');"
+                        String.format("INSERT INTO %s(%s) VALUES ('%s');", filesTable, filesTableColumn, filename)
                 )
         ) {
             int result = insertStatement.executeUpdate();

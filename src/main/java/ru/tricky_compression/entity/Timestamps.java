@@ -23,12 +23,12 @@ public class Timestamps {
         return serverEnd;
     }
 
-    public void setClientStart() {
-        clientStart = System.nanoTime();
+    public void setClientStart(long clientStart) {
+        this.clientStart = clientStart;
     }
 
-    public void setClientEnd() {
-        clientEnd = System.nanoTime();
+    public void setClientEnd(long clientEnd) {
+        this.clientEnd = clientEnd;
     }
 
     public void setServerStart() {
