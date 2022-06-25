@@ -7,9 +7,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import ru.tricky_compression.database.DataBase;
 import ru.tricky_compression.entity.ChunkData;
 import ru.tricky_compression.entity.FileData;
 
+import javax.xml.crypto.Data;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -25,6 +27,7 @@ public class UploadModule {
         try {
             fileData.getTimestamps().setServerStart();
             Path path = Common.getPath(fileData.getFilename());
+            DataBase.addPath(fileData.getFilename());
             Files.createDirectories(path.getParent());
             Files.write(
                     path,
@@ -44,6 +47,7 @@ public class UploadModule {
         try {
             chunk.getTimestamps().setServerStart();
             Path path = Common.getPathWithNumber(chunk.getFilename(), chunk.getChunkNumber());
+            DataBase.addPath(chunk.getFilename());
             Files.createDirectories(path.getParent());
             Files.write(
                     path,

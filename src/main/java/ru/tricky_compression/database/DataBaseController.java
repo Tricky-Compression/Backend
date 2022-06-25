@@ -10,11 +10,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/database")
 public class DataBaseController {
-    DataBase dataBase = new DataBase();
-
     @GetMapping("/have_chunk")
     public ResponseEntity<String> haveChunk(@RequestParam String hash) {
-        if (dataBase.contains(hash)) {
+        if (DataBase.contains(hash)) {
             return ResponseEntity.status(HttpStatus.FOUND).build();
         } else {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
