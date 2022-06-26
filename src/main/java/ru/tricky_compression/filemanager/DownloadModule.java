@@ -36,7 +36,7 @@ public class DownloadModule {
     }
 
     @GetMapping("/download/chunk")
-    public ResponseEntity<String> downloadChunk(@RequestBody int number, @RequestParam String filename, @RequestParam long clientStart) {
+    public ResponseEntity<String> downloadChunk(@RequestParam int number, @RequestParam String filename, @RequestParam long clientStart) {
         try {
             ChunkData chunkData = new ChunkData(number, filename);
             chunkData.getTimestamps().setClientStart(clientStart);
