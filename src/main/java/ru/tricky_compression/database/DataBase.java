@@ -6,40 +6,27 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DataBase {
     private static final String url = "jdbc:postgresql://51.250.23.237:5432/";
     private static final String user = "admin";
     private static final String password = "admin";
     private static final String chunksTable = "chunks";
+    private static final String chunksTableColumn = "hash";
     private static final String filesTable = "files";
-    private static final String filesTableColumn = "path";
+    private static final String filesTableColumn = "filename";
 
     public DataBase() {
-        // DEBUG BEGIN
-        try (Connection connection = DriverManager.getConnection(url, user, password);
-             Statement selectStatement = connection.createStatement()) {
-            ResultSet results = selectStatement.executeQuery(
-                    String.format("SELECT * FROM %s;", chunksTable)
-            );
-            while (results.next()) {
-                System.out.printf("%d. %s \t %s\n",
-                        results.getRow(),
-                        results.getString("hash"),
-                        results.getString("path"));
-            }
-        } catch (SQLException exception) {
-            exception.printStackTrace();
-            System.exit(-1);
-        }
-        // DEBUG END
+        System.out.println(System.getProperties());
     }
 
-    public static boolean contains(String hash) {
+    private static boolean haveRecordInTable(String table, String column, String record) {
         try (Connection connection = DriverManager.getConnection(url, user, password);
              Statement selectStatement = connection.createStatement()) {
             ResultSet results = selectStatement.executeQuery(
-                    String.format("SELECT 1 FROM %s WHERE hash = '%s';", chunksTable, hash)
+                    String.format("SELECT 1 FROM %s WHERE %s = '%s';", table, column, record)
             );
             return results.next();
         } catch (SQLException ignored) {
@@ -47,17 +34,47 @@ public class DataBase {
         }
     }
 
-    public static void addPath(String filename) {
+    public static boolean containsHash(String hash) {
+        return haveRecordInTable(chunksTable, chunksTableColumn, hash);
+    }
+
+    public static void addFilename(String filename) {
         try (
                 Connection connection = DriverManager.getConnection(url, user, password);
                 PreparedStatement insertStatement = connection.prepareStatement(
                         String.format("INSERT INTO %s(%s) VALUES ('%s');", filesTable, filesTableColumn, filename)
                 )
         ) {
-            int result = insertStatement.executeUpdate();
-            System.out.println("result = " + result);
+            if (!haveFilename(filename)) {
+                int result = insertStatement.executeUpdate();
+                if (result != 1) {
+                    throw new RuntimeException("Postgres: cannot add filename");
+                }
+            }
         } catch (SQLException exception) {
             exception.printStackTrace();
         }
+    }
+
+    private static boolean haveFilename(String filename) {
+        return haveRecordInTable(filesTable, filesTableColumn, filename);
+    }
+
+    public static String[] getFilenames() throws SQLException {
+        List<String> filenames = new ArrayList<>();
+        try (
+                Connection connection = DriverManager.getConnection(url, user, password);
+                Statement selectStatement = connection.createStatement();
+        ) {
+            ResultSet results = selectStatement.executeQuery(
+                    String.format("SELECT * FROM %s;", filesTable)
+            );
+            while (results.next()) {
+                filenames.add(results.getString(filesTableColumn));
+            }
+        } catch (SQLException exception) {
+            throw exception;
+        }
+        return filenames.toArray(new String[0]);
     }
 }

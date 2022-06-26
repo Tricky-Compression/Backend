@@ -26,7 +26,7 @@ public class UploadModule {
         try {
             fileData.getTimestamps().setServerStart();
             Path path = Common.getPath(fileData.getFilename());
-            DataBase.addPath(fileData.getFilename());
+            DataBase.addFilename(fileData.getFilename());
             Files.createDirectories(path.getParent());
             Files.write(
                     path,
@@ -46,7 +46,7 @@ public class UploadModule {
         try {
             chunk.getTimestamps().setServerStart();
             Path path = Common.getPathWithNumber(chunk.getFilename(), chunk.getChunkNumber());
-            DataBase.addPath(chunk.getFilename());
+            DataBase.addFilename(chunk.getFilename());
             Files.createDirectories(path.getParent());
             Files.write(
                     path,
