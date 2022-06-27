@@ -13,3 +13,4 @@ CREATE TABLE IF NOT EXISTS files (
 
 INSERT INTO files(filename) VALUES ('some_file');
 INSERT INTO files(filename) VALUES ('some_other_file');
+INSERT INTO files(filename) VALUES('test_chunk_2002');
