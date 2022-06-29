@@ -2,4 +2,4 @@
 
 Spring Boot server API
 
-![](server API.png)
+![](server_API.png)
